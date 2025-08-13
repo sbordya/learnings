@@ -1,0 +1,24 @@
+{
+  "name": "data-engineer-handbook",
+  "version": "1.0.0",
+  "description": "<a href=\"https://trendshift.io/repositories/8755\" target=\"_blank\"><img src=\"https://trendshift.io/api/badge/repositories/8755\" alt=\"DataExpert-io%2Fdata-engineer-handbook | Trendshift\" style=\"width: 250px; height: 55px;\" width=\"250\" height=\"55\"/></a>",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DataExpert-io/data-engineer-handbook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DataExpert-io/data-engineer-handbook/issues"
+  },
+  "homepage": "https://github.com/DataExpert-io/data-engineer-handbook#readme",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "ethers": "^6.15.0"
+  },
+  "type": "module"
+}

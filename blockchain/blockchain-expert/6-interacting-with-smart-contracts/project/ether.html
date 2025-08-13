@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ethers.js</title>
+  </head>
+  <body>
+    <button onclick="sendMoney()">Send Money</button>
+    <button onclick="sendDai()">Send Dai</button>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <script>
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      //connect();
+
+      async function sendMoney() {
+        await provider.send("eth_requestAccounts", []);
+
+        const txReceipt = await provider.getTransactionReceipt(
+          "0x817190844ee3c24ca77844851b47acf14ddcf538330fa90c932eec3ef7f9911d"
+        );
+        console.log("known tx receipt", txReceipt);
+
+        const tx = {
+          to: "0xF7A373F3DB374d9713225d03391DDEa73660aaa8",
+          value: ethers.utils.parseEther("0.0001"),
+        };
+        const gas = await provider.estimateGas(tx);
+        console.log("gas", ethers.utils.formatEther(gas));
+        const txInfo = await signer.sendTransaction(tx);
+        console.log("txInfo", txInfo);
+        const sentTxReceipt = await provider.waitForTransaction(txInfo.hash);
+        console.log("sent tx receipt", txReceipt);
+      }
+
+      async function sendDai() {
+        await provider.send("eth_requestAccounts", []);
+
+        const env = "test";
+        console.log("env", env);
+
+        const variables = {
+          prod: {
+            network: "homestead",
+            tokenAddress: "dai.tokens.ethers.eth",
+            tokenHolder: "0x7bB1678998c93Fa698b66F81bf599d0C08137ff1",
+          },
+          test: {
+            network: "sepolia",
+            tokenAddress: "0x776b6fC2eD15D6Bb5Fc32e0c89DE68683118c62A",
+            tokenHolder: "0xAd635C85F4D3Fa7f599823a50876d583eB54e040",
+          },
+        };
+        const { network, tokenAddress, tokenHolder } = variables[env];
+        const daiAbi = [
+          // Some details about the token
+          "function name() view returns (string)",
+          "function symbol() view returns (string)",
+
+          // Get the account balance
+          "function balanceOf(address) view returns (uint)",
+          // Send some of your tokens to someone else
+          "function transfer(address to, uint amount)",
+
+          // An event triggered whenever anyone transfers to someone else
+          "event Transfer(address indexed from, address indexed to, uint amount)",
+        ];
+
+        const daiContract = new ethers.Contract(tokenAddress, daiAbi, signer);
+        const balance = await daiContract.balanceOf(tokenHolder);
+        console.log("name", await daiContract.name());
+        console.log("symbol", await daiContract.symbol());
+        console.log("balanceOf", balance);
+        console.log(
+          "balanceOf formatUnits",
+          ethers.utils.formatUnits(balance, 18)
+        );
+
+        const tx = await daiContract.transfer(
+          "0xF7A373F3DB374d9713225d03391DDEa73660aaa8",
+          1
+        );
+        console.log(tx);
+      }
+
+      async function connect() {
+        await provider.send("eth_requestAccounts", []);
+
+        const address = "0xaDFE08B8f505e6B34EDD61544CD54E245D6C4173";
+        const balance = await provider.getBalance(address);
+        const ethBalance = ethers.utils.formatEther(balance);
+        console.log("ethBalance", ethBalance);
+        const txCount = await provider.getTransactionCount(address);
+        console.log("txCount", txCount);
+
+        const blockNumber = await provider.getBlockNumber();
+        console.log("getBlock", await provider.getBlock(blockNumber));
+        console.log(
+          "getBlockWithTransactions",
+          await provider.getBlockWithTransactions(blockNumber)
+        );
+
+        const fee = await provider.getFeeData();
+        console.log("fee", fee);
+
+        const usdc_addr = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+        const filter = {
+          address: usdc_addr,
+          topics: [ethers.utils.id("Transfer(address,address,uint256)")],
+        };
+        const logs = await provider.getLogs(filter);
+        console.log("logs", logs);
+
+        provider.once(filter, (Log) => {
+          console.log("event listening log (once)", Log);
+        });
+        let count = 1;
+        provider.on(filter, (Log) => {
+          console.log("event listening log (on), ", count, Log);
+          count++;
+        });
+        console.log(provider.listenerCount(filter));
+        //provider.off(filter);
+        provider.once("block", (Log) => {
+          console.log("event listening log (once)", Log);
+        });
+        provider.once("pending", (Log) => {
+          console.log("event listening log (once)", Log);
+        });
+      }
+    </script>
+  </body>
+</html>
