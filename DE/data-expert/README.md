@@ -1,6 +1,7 @@
 course link: https://learn.dataexpert.io/program/free-community-boot-camp/details
 github link: https://github.com/DataExpert-io/data-engineer-handbook
 youtube playlist: https://www.youtube.com/watch?v=myhe0LXpCeo&list=PLwUdL9DpGWU0lhwp3WCxRsb1385KFTLYE
+certificate: https://learn.dataexpert.io/certification/bordeaserghei19044/yt-bootcamp-completion
 
 links from course:
 
